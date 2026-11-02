@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Placeholder domain — replace with the production domain at deployment.
+Sitemap: https://www.fluidity.example/sitemap.xml

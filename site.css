@@ -1,0 +1,70 @@
+/*
+ * site.css — the framework-free layer.
+ * Everything here supports behavior implemented in js/main.js; the design
+ * itself lives in styles.css (design tokens + component styles) and the
+ * per-page component styles embedded in each HTML file.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Cross-document view transitions (the Angular app used the View Transitions
+ * API for route navigations; this is the CSS-only MPA equivalent). Browsers
+ * without support simply ignore it and do a normal navigation.
+ * ------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * Scroll reveal. The prerendered HTML ships with reveal-done (content visible
+ * without JS). On boot main.js strips reveal-done so elements can animate in
+ * through the IntersectionObserver — this rule kills the reverse fade-out
+ * while the strip happens, exactly once.
+ * ------------------------------------------------------------------------- */
+html.reveal-init .reveal {
+  transition: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Header: menu button swaps hamburger/close, theme toggle shows the icon for
+ * the *opposite* theme. Both SVGs are injected by main.js.
+ * ------------------------------------------------------------------------- */
+.menu-btn .ico-close {
+  display: none;
+}
+
+.menu-btn[aria-expanded='true'] .ico-menu {
+  display: none;
+}
+
+.menu-btn[aria-expanded='true'] .ico-close {
+  display: block;
+}
+
+[data-theme='light'] .theme-toggle .ico-sun {
+  display: none;
+}
+
+[data-theme='dark'] .theme-toggle .ico-moon {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile menu scroll lock. (The Angular component scoped its body.menu-locked
+ * rule with an attribute the body element never carries; this is the rule as
+ * intended.)
+ * ------------------------------------------------------------------------- */
+body.menu-locked {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+ * Language dropdown menu entries use icons that are injected at runtime.
+ * ------------------------------------------------------------------------- */
+.option .lucide {
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * Small-screen process stepper: active chip highlight works the same as the
+ * desktop rail; the created nodes reuse data-sc-scoped styles from the page.
+ * ------------------------------------------------------------------------- */
