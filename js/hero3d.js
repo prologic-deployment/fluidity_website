@@ -1,6 +1,5 @@
 /* ===========================================================================
- * hero3d.js — "The Flow Engine", the full-hero WebGL scene: a direct port of
- * src/app/shared/components/fluid-visual/fluid-visual.ts to plain JS.
+ * hero3d.js — "The Flow Engine", the full-hero WebGL scene, in plain JS.
  *
  * A turbulent, chaotic particle storm on the left gets pulled through a
  * pulsing gradient gate into calm laminar streams that converge into a

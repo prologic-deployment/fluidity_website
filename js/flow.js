@@ -1,6 +1,6 @@
 /* ===========================================================================
- * flow.js — the home page's living background ("flow field"), a direct port
- * of src/app/shared/components/flow-field.ts to plain Canvas 2D.
+ * flow.js — the home page's living background ("flow field"), drawn with
+ * plain Canvas 2D.
  *
  * Brand-blue / cyan glow blobs drifting like fluid, twinkling particles, slow
  * ribbon waves, periodic brand-gradient blooms and a rare Tunisian-red spark.
@@ -17,7 +17,7 @@ const BLOOM_PERIOD = 7000;
 const BLOOM_LIFE = 2600;
 
 export function initFlowField() {
-  const host = document.querySelector('app-flow-field');
+  const host = document.querySelector('site-flow-field');
   if (!host) return;
   const canvas = host.querySelector('canvas');
   if (!canvas) return;

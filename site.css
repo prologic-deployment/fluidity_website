@@ -6,16 +6,15 @@
  */
 
 /* ---------------------------------------------------------------------------
- * Cross-document view transitions (the Angular app used the View Transitions
- * API for route navigations; this is the CSS-only MPA equivalent). Browsers
- * without support simply ignore it and do a normal navigation.
+ * Cross-document view transitions. Browsers without support simply ignore it
+ * and do a normal navigation.
  * ------------------------------------------------------------------------- */
 @view-transition {
   navigation: auto;
 }
 
 /* ---------------------------------------------------------------------------
- * Scroll reveal. The prerendered HTML ships with reveal-done (content visible
+ * Scroll reveal. The HTML ships with reveal-done (content visible
  * without JS). On boot main.js strips reveal-done so elements can animate in
  * through the IntersectionObserver — this rule kills the reverse fade-out
  * while the strip happens, exactly once.
@@ -49,9 +48,7 @@ html.reveal-init .reveal {
 }
 
 /* ---------------------------------------------------------------------------
- * Mobile menu scroll lock. (The Angular component scoped its body.menu-locked
- * rule with an attribute the body element never carries; this is the rule as
- * intended.)
+ * Mobile menu scroll lock.
  * ------------------------------------------------------------------------- */
 body.menu-locked {
   overflow: hidden;

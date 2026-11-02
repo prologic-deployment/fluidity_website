@@ -1,7 +1,6 @@
 /* ===========================================================================
  * main.js — the framework-free runtime for the Fluidity site.
- * Every behavior previously provided by the Angular app is reimplemented
- * here in plain DOM APIs:
+ * All site behavior is implemented here in plain DOM APIs:
  *
  *   theme toggle · language switch (FR/EN/AR) · header scroll state ·
  *   mobile menu · language dropdown · scroll reveal · stat counters ·
@@ -9,8 +8,8 @@
  *   contact form validation + demo submit · flow-field background ·
  *   WebGL hero ("The Flow Engine") — the last two load on demand.
  *
- * The prerendered HTML already contains the full design, styles and content;
- * this file only re-attaches the interactivity Angular used to provide.
+ * The static HTML already contains the full design, styles and content;
+ * this file only adds the interactivity.
  * =========================================================================== */
 (function () {
   'use strict';
@@ -24,7 +23,7 @@
     typeof window.matchMedia === 'function' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /** Icon markup — exact lucide paths used by the original app. */
+  /** Icon markup — exact lucide paths. */
   const ICON_PATHS = {
     sun:
       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>' +
@@ -202,12 +201,12 @@
       if (btn.dataset.ready) return;
       btn.dataset.ready = '1';
       const scopeAttr = findScopeAttr(btn);
-      // The prerendered button holds the moon icon; add the sun beside it and
+      // The static button holds the moon icon; add the sun beside it and
       // let site.css pick the visible one from html[data-theme].
-      const moon = btn.querySelector('lucide-icon');
+      const moon = btn.querySelector('site-glyph');
       if (moon) moon.classList.add('ico-moon');
       if (!btn.querySelector('.ico-sun')) {
-        const sun = el('lucide-icon', 'ico-sun', scopeAttr);
+        const sun = el('site-glyph', 'ico-sun', scopeAttr);
         sun.setAttribute('aria-hidden', 'true');
         sun.innerHTML = iconSvg('sun', 18);
         btn.appendChild(sun);
@@ -243,7 +242,7 @@
   function initHeader() {
     const bar = $('.bar');
     if (!bar) return;
-    const headerHost = bar.closest('app-header') || bar.parentElement;
+    const headerHost = bar.closest('site-header') || bar.parentElement;
     const scopeAttr = findScopeAttr(bar);
     const isHome = currentPathKey() === '/';
 
@@ -258,10 +257,10 @@
     const menuBtn = $('.menu-btn', bar);
     if (!menuBtn) return;
 
-    const menuIco = menuBtn.querySelector('lucide-icon');
+    const menuIco = menuBtn.querySelector('site-glyph');
     if (menuIco) menuIco.classList.add('ico-menu');
     if (!menuBtn.querySelector('.ico-close')) {
-      const closeIco = el('lucide-icon', 'ico-close', scopeAttr);
+      const closeIco = el('site-glyph', 'ico-close', scopeAttr);
       closeIco.setAttribute('aria-hidden', 'true');
       closeIco.innerHTML = iconSvg('x', 22);
       menuBtn.appendChild(closeIco);
@@ -405,7 +404,7 @@
       label.textContent = LANG_META[code].label;
       option.appendChild(label);
       if (code === currentLang) {
-        const check = el('lucide-icon', null, scopeAttr);
+        const check = el('site-glyph', null, scopeAttr);
         check.setAttribute('aria-hidden', 'true');
         check.innerHTML = iconSvg('check', 15);
         option.appendChild(check);
@@ -430,8 +429,8 @@
     if (reducedMotion || typeof IntersectionObserver === 'undefined') return;
 
     const html = document.documentElement;
-    // Strip the server-side reveal-done without a reverse fade-out, so the
-    // entrance animation plays exactly like the hydrated Angular app.
+    // Strip the static reveal-done without a reverse fade-out, so the
+    // entrance animation plays.
     html.classList.add('reveal-init');
     els.forEach((node) => node.classList.remove('reveal-done'));
     void document.body.offsetHeight;
@@ -575,7 +574,7 @@
     if (ctrls[0]) ctrls[0].addEventListener('click', prev);
     if (ctrls[1]) ctrls[1].addEventListener('click', next);
 
-    // Capture the SSR arrow icons so RTL can mirror them like Angular did.
+    // Capture the static arrow icons so RTL can mirror them.
     const leftSvg = ctrls[0] && ctrls[0].querySelector('svg');
     const rightSvg = ctrls[1] && ctrls[1].querySelector('svg');
     const leftHtml = leftSvg ? leftSvg.outerHTML : '';
@@ -657,7 +656,7 @@
     let tick = 0;
     let stepStartedAt = Date.now();
 
-    // Capture the SSR icons for the play/pause toggle and the panel arrows.
+    // Capture the static icons for the play/pause toggle and the panel arrows.
     const ssPns = $$('.pn', zone);
     const captured = {
       pause: ssPns[0] && ssPns[0].querySelector('svg') ? ssPns[0].querySelector('svg').outerHTML : iconSvg('pause', 15),
@@ -689,7 +688,7 @@
 
         const num = el('span', 'node-num', scopeAttr);
         if (i < selected) {
-          const icon = el('lucide-icon', null, scopeAttr);
+          const icon = el('site-glyph', null, scopeAttr);
           icon.setAttribute('aria-hidden', 'true');
           icon.innerHTML = iconSvg('check', 14);
           num.appendChild(icon);
@@ -790,7 +789,7 @@
       }
     }
 
-    // Persistent interval, exactly like the Angular component.
+    // Persistent interval.
     setInterval(() => {
       if (!playing) return;
       const fraction = (Date.now() - stepStartedAt) / STEP_MS;
@@ -805,7 +804,7 @@
       }
     }, 100);
 
-    // SSR already rendered step 1 for French; the single hook below covers
+    // The HTML already contains step 1 for French; the single hook below covers
     // every later language switch (the boot phase re-applies a stored language
     // after all components registered their hooks).
     onLangRefresh(() => rebuild());
@@ -837,7 +836,7 @@
     let liveForm = form;
 
     function fieldEl(field) {
-      return liveForm.querySelector('[formcontrolname="' + field + '"]');
+      return liveForm.querySelector('[name="' + field + '"]');
     }
 
     /**
@@ -866,7 +865,7 @@
         if (!errEl) {
           errEl = el('p', 'field-error', scopeAttr);
           errEl.id = 'c-' + field + '-error';
-          const icon = el('lucide-icon', null, scopeAttr);
+          const icon = el('site-glyph', null, scopeAttr);
           icon.setAttribute('aria-hidden', 'true');
           icon.innerHTML = iconSvg('alert', 14);
           errEl.appendChild(icon);
@@ -885,7 +884,7 @@
 
     function wire(currentForm) {
       Object.keys(FIELDS).forEach((field) => {
-        const node = currentForm.querySelector('[formcontrolname="' + field + '"]');
+        const node = currentForm.querySelector('[name="' + field + '"]');
         if (!node) return;
         node.addEventListener('blur', () => { touched[field] = true; renderField(field); });
         node.addEventListener('input', () => { if (touched[field]) renderField(field); });
@@ -901,7 +900,7 @@
 
       const success = el('div', 'success', scopeAttr);
       success.setAttribute('role', 'status');
-      const icon = el('lucide-icon', null, scopeAttr);
+      const icon = el('site-glyph', null, scopeAttr);
       icon.setAttribute('aria-hidden', 'true');
       icon.innerHTML = sendHtml;
       const h2 = el('h2', null, scopeAttr);
@@ -946,8 +945,8 @@
       if (btn) {
         btn.disabled = true;
         btn.innerHTML =
-          '<lucide-icon class="spin" aria-hidden="true" ' + scopeAttr + '>' +
-          iconSvg('loader', 18) + '</lucide-icon><span>' + t('contact.form.sending') + '</span>';
+          '<site-glyph class="spin" aria-hidden="true" ' + scopeAttr + '>' +
+          iconSvg('loader', 18) + '</site-glyph><span>' + t('contact.form.sending') + '</span>';
       }
       // Demo mode: CONTACT_API_URL is empty in the original app too, so the
       // submission simulates latency and then succeeds.
@@ -975,13 +974,13 @@
   /* Visuals: flow-field canvas + WebGL hero (loaded on demand)             */
   /* --------------------------------------------------------------------- */
   function initVisuals() {
-    if ($('app-flow-field')) {
+    if ($('site-flow-field')) {
       import('./flow.js')
         .then((m) => m.initFlowField())
         .catch(() => { /* background is optional */ });
     }
 
-    const fv = $('app-fluid-visual');
+    const fv = $('site-fluid-visual');
     if (!fv) return;
     const stage = $('.stage', fv);
     if (!stage || reducedMotion) return; // fallback orbs stay visible
